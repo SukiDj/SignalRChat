@@ -478,3 +478,4 @@ $RECYCLE.BIN/
 
 SkiConnect/**/obj/
 SkiConnect/**/bin/
+API/signalrchat.db
