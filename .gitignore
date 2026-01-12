@@ -476,6 +476,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-SkiConnect/**/obj/
-SkiConnect/**/bin/
+SignalRChat/**/obj/
+SignalRChat/**/bin/
+SignalRChat/**/Migrations/
 API/signalrchat.db
