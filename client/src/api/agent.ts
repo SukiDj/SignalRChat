@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { ChatMessage } from "../types/ChatMessage";
+import type { ChatMessage } from "../models/ChatMessage";
 
 axios.defaults.baseURL = "https://localhost:5000/api";
 
@@ -14,7 +14,7 @@ const requests = {
 const chatApi = {
     getUsers: (): Promise<string[]> => requests.get<string[]>("/chat/users"),
     getPrivateRoomId: (user1: string, user2: string): Promise<string> => requests.get<string>(`/chat/private-room?user1=${user1}&user2=${user2}`),
-    getRooms: (roomId: string): Promise<ChatMessage[]> => requests.get<ChatMessage[]>(`/chat/rooms/${roomId}/messages`),
+    getRoomMessages: (roomId: string): Promise<ChatMessage[]> => requests.get<ChatMessage[]>(`/chat/rooms/${roomId}/messages`)
 };
 
 const agent = {

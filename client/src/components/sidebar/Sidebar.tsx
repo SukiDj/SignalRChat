@@ -1,8 +1,8 @@
 import {
+    Box,
     List,
     ListItemButton,
     ListItemText,
-    Divider,
     Typography
 } from "@mui/material";
 
@@ -10,7 +10,7 @@ interface Props {
     users: string[];
     currentUser: string;
     activeRoom: string;
-    onSelectRoom: (roomId: string) => void;
+    onSelectRoom: (room: string) => void;
 }
 
 export default function Sidebar({
@@ -20,8 +20,8 @@ export default function Sidebar({
     onSelectRoom
 }: Props) {
     return (
-        <>
-            <Typography variant="h6" sx={{ p: 2 }}>
+        <Box width={300} borderRight="1px solid #ddd">
+            <Typography p={2} fontWeight="bold">
                 Chats
             </Typography>
 
@@ -32,15 +32,7 @@ export default function Sidebar({
                 >
                     <ListItemText primary="General chat" />
                 </ListItemButton>
-            </List>
 
-            <Divider />
-
-            <Typography variant="subtitle1" sx={{ p: 2 }}>
-                Users
-            </Typography>
-
-            <List>
                 {users
                     .filter(u => u !== currentUser)
                     .map(user => (
@@ -53,6 +45,7 @@ export default function Sidebar({
                         </ListItemButton>
                     ))}
             </List>
-        </>
+
+        </Box>
     );
 }

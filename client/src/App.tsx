@@ -1,20 +1,15 @@
-import {
-    Container,
-    Typography,
-    Grid,
-    Paper
-} from "@mui/material";
+import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import Login from "./components/Login";
-import ChatRoom from "./components/ChatRoom";
-import Sidebar from "./components/Sidebar";
+import Login from "./components/layout/Login";
+import Sidebar from "./components/sidebar/Sidebar";
+import ChatRoom from "./components/chat/ChatRoom";
 import { startConnection } from "./services/signalRService";
 import agent from "./api/agent";
 
 export default function App() {
     const [username, setUsername] = useState<string | null>(null);
     const [users, setUsers] = useState<string[]>([]);
-    const [activeRoom, setActiveRoom] = useState<string>("general");
+    const [activeRoom, setActiveRoom] = useState("general");
 
     useEffect(() => {
         startConnection();
@@ -22,59 +17,37 @@ export default function App() {
 
     useEffect(() => {
         if (!username) return;
-
         agent.chatApi.getUsers().then(setUsers);
     }, [username]);
 
-    const handleSelectRoom = async (target: string) => {
+    const selectRoom = async (target: string) => {
         if (target === "general") {
             setActiveRoom("general");
-            return;
+        } else {
+            const roomId = await agent.chatApi.getPrivateRoomId(username!, target);
+            setActiveRoom(roomId);
         }
-
-        // private chat
-        const roomId = await agent.chatApi.getPrivateRoomId(username!, target);
-        setActiveRoom(roomId);
     };
 
-    if (!username) {
-        return (
-            <Container maxWidth="sm">
-                <Typography variant="h4" align="center" gutterBottom>
-                    SignalR Chat
-                </Typography>
-                <Login onLogin={setUsername} />
-            </Container>
-        );
-    }
+    if (!username) return <Login onLogin={setUsername} />;
 
     return (
-        <Container maxWidth="md">
-            <Typography variant="h4" align="center" gutterBottom>
-                SignalR Chat
-            </Typography>
+        <Box display="flex" height="100vh">
+            <Sidebar
+                users={users}
+                currentUser={username}
+                activeRoom={activeRoom}
+                onSelectRoom={selectRoom}
+            />
 
-            <Grid container spacing={2}>
-                <Grid item xs={4}>
-                    <Paper sx={{ height: "80vh" }}>
-                        <Sidebar
-                            users={users}
-                            currentUser={username}
-                            activeRoom={activeRoom}
-                            onSelectRoom={handleSelectRoom}
-                        />
-                    </Paper>
-                </Grid>
-
-                <Grid item xs={8}>
-                    <Paper sx={{ p: 2, height: "80vh" }}>
-                        <ChatRoom
-                            username={username}
-                            roomId={activeRoom}
-                        />
-                    </Paper>
-                </Grid>
-            </Grid>
-        </Container>
+            <ChatRoom
+                username={username}
+                roomId={activeRoom}
+                onLogout={() => {
+                    setUsername(null);
+                    setActiveRoom("general");
+                }}
+            />
+        </Box>
     );
 }

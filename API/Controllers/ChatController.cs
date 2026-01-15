@@ -39,7 +39,7 @@ namespace API.Controllers
         }
 
         [HttpGet("rooms/{roomId}/messages")]
-        public async Task<IActionResult> GetRoomMessages( string roomId, [FromQuery] int take = 50)
+        public async Task<IActionResult> GetRoomMessages(string roomId, [FromQuery] int take = 50)
         {
             var messages = await _context.Messages
                 .Where(m => m.RoomId == roomId)
@@ -55,6 +55,5 @@ namespace API.Controllers
 
             return Ok(messages);
         }
-
     }
 }
