@@ -480,3 +480,5 @@ SignalRChat/**/obj/
 SignalRChat/**/bin/
 SignalRChat/Persistence/Migrations/
 API/signalrchat.db
+API/signalrchat.db-shm
+API/signalrchat.db-wal

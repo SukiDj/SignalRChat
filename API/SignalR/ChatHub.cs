@@ -2,12 +2,15 @@ using Domain;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System.Collections.Concurrent;
 
 namespace API.SignalR
 {
     public class ChatHub : Hub
     {
         private readonly ChatDbContext _context;
+
+        private static readonly ConcurrentDictionary<string, string> Connections = new();
 
         public ChatHub(ChatDbContext context)
         {
@@ -18,22 +21,27 @@ namespace API.SignalR
         {
             var user = await GetOrCreateUser(username);
 
+            Connections[Context.ConnectionId] = username;
+
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
 
-            await Clients.Group(roomId).SendAsync(
+            await Clients.OthersInGroup(roomId).SendAsync(
                 "ReceiveSystemMessage",
                 $"{user.Username} joined the room"
             );
         }
 
-        public async Task LeaveRoom(string roomId, string username)
+        public async Task LeaveRoom(string roomId)
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId);
+            if (Connections.TryGetValue(Context.ConnectionId, out var username))
+            {
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId);
 
-            await Clients.Group(roomId).SendAsync(
-                "ReceiveSystemMessage",
-                $"{username} left the room"
-            );
+                await Clients.OthersInGroup(roomId).SendAsync(
+                    "ReceiveSystemMessage",
+                    $"{username} left the room"
+                );
+            }
         }
 
         public async Task SendMessage(string roomId, string username, string message)
@@ -55,58 +63,50 @@ namespace API.SignalR
                 "ReceiveMessage",
                 new
                 {
-                    User = user.Username,
-                    Message = message,
-                    SentAt = chatMessage.SentAt
+                    user = user.Username,
+                    message = chatMessage.Content,
+                    sentAt = chatMessage.SentAt
                 }
             );
         }
 
-        public async Task StartPrivateChat(string user1, string user2)
+        public async Task GetRoomMessages(string roomId, int take = 50)
         {
-            var roomId = GeneratePrivateRoomId(user1, user2);
+            var messages = await _context.Messages
+                .Where(m => m.RoomId == roomId)
+                .OrderByDescending(m => m.SentAt)
+                .Take(take)
+                .Select(m => new
+                {
+                    user = m.Sender.Username,
+                    message = m.Content,
+                    sentAt = m.SentAt
+                })
+                .ToListAsync();
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            messages.Reverse();
 
-            await Clients.Caller.SendAsync(
-                "PrivateChatStarted",
-                roomId
-            );
+            await Clients.Caller.SendAsync("ReceiveRoomMessages", messages);
         }
 
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            Connections.TryRemove(Context.ConnectionId, out _);
+            await base.OnDisconnectedAsync(exception);
+        }
 
         private async Task<User> GetOrCreateUser(string username)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == username);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
 
             if (user == null)
             {
-                user = new User
-                {
-                    Username = username
-                };
-
+                user = new User { Username = username };
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
             }
 
             return user;
         }
-
-        private static string GeneratePrivateRoomId(string user1, string user2)
-        {
-            var users = new[] { user1, user2 };
-            Array.Sort(users);
-
-            return $"private-{users[0]}-{users[1]}";
-        }
-
-        public override async Task OnDisconnectedAsync(Exception exception)
-        {
-            // treba dorada
-            await base.OnDisconnectedAsync(exception);
-        }
-
     }
 }
