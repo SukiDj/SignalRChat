@@ -16,15 +16,16 @@ export default function MessageInput({ onSend }: Props) {
     };
 
     return (
-        <Box display="flex" p={2} borderTop="1px solid #ddd">
+        <Box display="flex" p={2} borderTop="1px solid #ddd" bgcolor={"#fafafa"}>
             <TextField
                 fullWidth
+                color="success"
                 placeholder="Type a message"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && send()}
             />
-            <IconButton color="primary" onClick={send}>
+            <IconButton color="success" onClick={send}>
                 <SendIcon />
             </IconButton>
         </Box>

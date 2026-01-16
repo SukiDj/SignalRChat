@@ -49,13 +49,14 @@ export default function ChatRoom({ username, roomId, onLogout }: Props) {
 
 
     return (
-        <Box flex={1} display="flex" flexDirection="column">
+        <Box flex={1} display="flex" flexDirection="column" >
             <Box
                 p={2}
                 borderBottom="1px solid #ddd"
                 display="flex"
                 alignItems="center"
                 justifyContent="space-between"
+                bgcolor={"#f5f5f5"}
             >
                 <Typography fontWeight="bold">
                     {getChatTitle()}

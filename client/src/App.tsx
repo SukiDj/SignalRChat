@@ -30,9 +30,10 @@ export default function App() {
     };
 
     if (!username) return <Login onLogin={setUsername} />;
+    
 
     return (
-        <Box display="flex" height="100vh">
+        <Box display="flex" height="98vh">
             <Sidebar
                 users={users}
                 currentUser={username}

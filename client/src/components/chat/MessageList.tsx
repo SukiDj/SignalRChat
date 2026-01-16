@@ -8,7 +8,7 @@ interface Props {
 
 export default function MessageList({ messages, currentUser }: Props) {
     return (
-        <Box flex={1} p={2} overflow="auto">
+        <Box flex={1} p={2} overflow="auto" bgcolor={"#fafafa"}>
             {messages.map((m, i) => (
                 <Box
                     key={i}

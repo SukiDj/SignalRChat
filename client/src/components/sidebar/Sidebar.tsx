@@ -20,7 +20,7 @@ export default function Sidebar({
     onSelectRoom
 }: Props) {
     return (
-        <Box width={300} borderRight="1px solid #ddd">
+        <Box width={300} borderRight="1px solid #ddd" bgcolor={"#f5f5f5"}>
             <Typography p={2} fontWeight="bold">
                 Chats
             </Typography>
@@ -29,6 +29,14 @@ export default function Sidebar({
                 <ListItemButton
                     selected={activeRoom === "general"}
                     onClick={() => onSelectRoom("general")}
+                    sx={{
+                        "&.Mui-selected": {
+                            backgroundColor: "#dcf8c6de",
+                            "&:hover": {
+                                backgroundColor: "#cdebb0",
+                            }
+                        }
+                    }}
                 >
                     <ListItemText primary="General chat" />
                 </ListItemButton>
@@ -40,6 +48,14 @@ export default function Sidebar({
                             key={user}
                             selected={activeRoom.includes(user)}
                             onClick={() => onSelectRoom(user)}
+                            sx={{
+                                "&.Mui-selected": {
+                                    backgroundColor: "#dcf8c6de",
+                                    "&:hover": {
+                                        backgroundColor: "#cdebb0",
+                                    }
+                                }
+                            }}
                         >
                             <ListItemText primary={user} />
                         </ListItemButton>
