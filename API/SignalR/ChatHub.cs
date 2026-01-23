@@ -24,11 +24,6 @@ namespace API.SignalR
             Connections[Context.ConnectionId] = username;
 
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-
-            // await Clients.OthersInGroup(roomId).SendAsync(
-            //     "ReceiveSystemMessage",
-            //     $"{user.Username} joined the room"
-            // );
         }
 
         public async Task LeaveRoom(string roomId)
@@ -36,11 +31,6 @@ namespace API.SignalR
             if (Connections.TryGetValue(Context.ConnectionId, out var username))
             {
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId);
-
-                // await Clients.OthersInGroup(roomId).SendAsync(
-                //     "ReceiveSystemMessage",
-                //     $"{username} left the room"
-                // );
             }
         }
 
