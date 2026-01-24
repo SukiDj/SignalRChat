@@ -188,6 +188,11 @@ Instalirano:
 ### Backend
 
 1. Pozicionirati se u backend folder
+
+```bash
+cd API
+```
+
 2. Instalirati pakete (ako je potrebno):
 
 ```bash
