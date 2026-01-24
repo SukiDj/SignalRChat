@@ -378,7 +378,7 @@ Aplikacija je svesno zadržana na jednostavnom nivou kako bi tutorijal bio razum
 
 ## Dalja unapređenja (van opsega tutorijala)
 
-* autentikacija i autorizacija
+* autentifikacija i autorizacija
 * čuvanje chat soba u bazi
 * slanje fajlova
 * notifikacije
