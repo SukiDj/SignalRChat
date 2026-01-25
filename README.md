@@ -179,6 +179,7 @@ SignalR logika je izdvojena u poseban servis (`signalRService.ts`).
 
 Instalirano:
 
+* **Git (git clone)**
 * **.NET SDK 9.0**
 * **Node.js 18+**
 * **npm**
@@ -199,7 +200,13 @@ cd API
 dotnet restore
 ```
 
-3. Pokrenuti aplikaciju:
+3. Zbog https sertifikata uraditi:
+
+```bash
+dotnet dev-certs https --trust
+```
+
+4. Pokrenuti aplikaciju:
 
 ```bash
 dotnet run
